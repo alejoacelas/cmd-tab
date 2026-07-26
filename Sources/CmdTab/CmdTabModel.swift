@@ -8,6 +8,11 @@ struct AppCandidate: Equatable {
     var hasVisibleWindow = true
 }
 
+struct ModifierChangeDecision: Equatable {
+    let shouldCommitSelection: Bool
+    let shouldConsumeEvent: Bool
+}
+
 enum CmdTabModel {
     static let excludedBundleIdentifiers = Set([
         "com.apple.finder",
@@ -37,5 +42,12 @@ enum CmdTabModel {
     static func movedIndex(_ index: Int, by delta: Int, count: Int) -> Int {
         guard count > 0 else { return 0 }
         return (index + delta % count + count) % count
+    }
+
+    static func modifierChangeDecision(isSessionActive: Bool, commandIsPressed: Bool) -> ModifierChangeDecision {
+        ModifierChangeDecision(
+            shouldCommitSelection: isSessionActive && !commandIsPressed,
+            shouldConsumeEvent: false
+        )
     }
 }

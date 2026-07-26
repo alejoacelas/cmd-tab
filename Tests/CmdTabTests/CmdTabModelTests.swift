@@ -30,3 +30,20 @@ import Testing
     #expect(CmdTabModel.movedIndex(2, by: 1, count: 3) == 0)
     #expect(CmdTabModel.movedIndex(0, by: -1, count: 3) == 2)
 }
+
+@Test func commandReleaseCommitsSelectionWithoutConsumingModifierEvent() {
+    let decision = CmdTabModel.modifierChangeDecision(isSessionActive: true, commandIsPressed: false)
+
+    #expect(decision == ModifierChangeDecision(shouldCommitSelection: true, shouldConsumeEvent: false))
+}
+
+@Test func otherModifierChangesPassThroughWithoutCommitting() {
+    #expect(
+        CmdTabModel.modifierChangeDecision(isSessionActive: true, commandIsPressed: true) ==
+            ModifierChangeDecision(shouldCommitSelection: false, shouldConsumeEvent: false)
+    )
+    #expect(
+        CmdTabModel.modifierChangeDecision(isSessionActive: false, commandIsPressed: false) ==
+            ModifierChangeDecision(shouldCommitSelection: false, shouldConsumeEvent: false)
+    )
+}

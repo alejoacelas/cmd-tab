@@ -184,9 +184,17 @@ final class CmdTabController: NSObject, NSApplicationDelegate {
         }
         let flags = event.flags
         let key = event.getIntegerValueField(.keyboardEventKeycode)
-        if type == .flagsChanged, isSessionActive, !flags.contains(.maskCommand) {
-            DispatchQueue.main.async { self.commitSelection() }
-            return true
+        if type == .flagsChanged {
+            let decision = CmdTabModel.modifierChangeDecision(
+                isSessionActive: isSessionActive,
+                commandIsPressed: flags.contains(.maskCommand)
+            )
+            if decision.shouldCommitSelection {
+                DispatchQueue.main.async { self.commitSelection() }
+            }
+            // The source app saw Command go down before Cmd-Tab intercepted Tab. Let it also see
+            // Command go up, or AppKit can retain stale modifier and menu-key-equivalent state.
+            return decision.shouldConsumeEvent
         }
         guard type == .keyDown else { return false }
         if flags.contains(.maskCommand), key == 48 {
