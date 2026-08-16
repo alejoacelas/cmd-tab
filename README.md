@@ -1,8 +1,3 @@
----
-human_edit_tracking:
-  enabled: true
-  history: []
----
 # Cmd-Tab
 
 My small macOS app that reproduces the AltTab setup I use on ⌘Tab, without AltTab's unused configuration surface.
